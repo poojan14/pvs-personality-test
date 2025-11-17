@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>All Responses</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-950 text-slate-100">
+  <div class="max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5 sm:mb-6">
+      <div>
+        <h1 class="text-xl sm:text-2xl font-bold">All Responses</h1>
+        <p class="text-[11px] sm:text-xs text-slate-400">
+          View, download or compare responses. Optimized for mobile: scroll horizontally if needed.
+        </p>
+      </div>
+      <div class="flex flex-wrap items-center gap-2">
+        <a href="/export/csv"
+           class="inline-flex items-center justify-center px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-emerald-500 hover:bg-emerald-400 text-white shadow shadow-emerald-500/30 transition">
+          Download all as CSV
+        </a>
+        <a href="/" class="text-xs sm:text-sm text-sky-400 hover:underline">← Back to test</a>
+      </div>
+    </div>
+
+    <div id="tableContainer"
+         class="bg-slate-900/80 border border-slate-700 rounded-2xl shadow-xl overflow-auto">
+      <table class="min-w-full text-[11px] sm:text-xs md:text-sm">
+        <thead class="bg-slate-800">
+          <tr>
+            <th class="px-2 sm:px-3 py-2 text-left border-b border-slate-700">ID</th>
+            <th class="px-2 sm:px-3 py-2 text-left border-b border-slate-700">Created</th>
+            <th class="px-2 sm:px-3 py-2 text-left border-b border-slate-700">Name</th>
+            <th class="px-2 sm:px-3 py-2 text-left border-b border-slate-700">Email</th>
+            <th class="px-2 sm:px-3 py-2 text-left border-b border-slate-700">Q1</th>
+            <th class="px-2 sm:px-3 py-2 text-left border-b border-slate-700">Q2</th>
+            <th class="px-2 sm:px-3 py-2 text-left border-b border-slate-700">Q3</th>
+            <th class="px-2 sm:px-3 py-2 text-left border-b border-slate-700">Q4</th>
+            <th class="px-2 sm:px-3 py-2 text-left border-b border-slate-700">Q5</th>
+            <th class="px-2 sm:px-3 py-2 text-left border-b border-slate-700">Q6</th>
+            <th class="px-2 sm:px-3 py-2 text-left border-b border-slate-700">Q7</th>
+            <th class="px-2 sm:px-3 py-2 text-left border-b border-slate-700">Q8</th>
+            <th class="px-2 sm:px-3 py-2 text-left border-b border-slate-700">Q9</th>
+            <th class="px-2 sm:px-3 py-2 text-left border-b border-slate-700">Q10</th>
+            <th class="px-2 sm:px-3 py-2 text-left border-b border-slate-700">Q11</th>
+            <th class="px-2 sm:px-3 py-2 text-left border-b border-slate-700">Q12</th>
+            <th class="px-2 sm:px-3 py-2 text-left border-b border-slate-700">Q13</th>
+            <th class="px-2 sm:px-3 py-2 text-left border-b border-slate-700">Q14</th>
+            <th class="px-2 sm:px-3 py-2 text-left border-b border-slate-700">Q15</th>
+            <th class="px-2 sm:px-3 py-2 text-left border-b border-slate-700">Q16</th>
+            <th class="px-2 sm:px-3 py-2 text-left border-b border-slate-700">Compare</th>
+          </tr>
+        </thead>
+        <tbody id="responsesBody" class="divide-y divide-slate-800">
+          <!-- rows via JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <p id="noData" class="mt-3 sm:mt-4 text-xs text-slate-400 hidden">
+      No responses yet.
+    </p>
+
+    <!-- Comparison section -->
+    <section id="compareSection"
+             class="mt-5 sm:mt-6 hidden bg-slate-900/80 border border-slate-700 rounded-2xl shadow-xl p-4 sm:p-5">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-3">
+        <h2 class="text-sm sm:text-lg font-semibold">Compare selected responses</h2>
+        <p class="text-[11px] sm:text-xs text-slate-400">
+          Select up to 3 rows in the table above.
+        </p>
+      </div>
+      <div id="compareContainer" class="grid gap-3 sm:grid-cols-2 md:grid-cols-3 text-[11px] sm:text-xs md:text-sm">
+        <!-- comparison columns via JS -->
+      </div>
+    </section>
+  </div>
+
+  <script>
+    let allResponses = [];
+    const selectedIds = new Set();
+
+    function renderCompare() {
+      const section = document.getElementById('compareSection');
+      const container = document.getElementById('compareContainer');
+
+      if (selectedIds.size === 0) {
+        section.classList.add('hidden');
+        container.innerHTML = '';
+        return;
+      }
+
+      section.classList.remove('hidden');
+      container.innerHTML = '';
+
+      const selectedArray = Array.from(selectedIds).slice(0, 3);
+      const questions = [
+        '1. Introvert or Extrovert?',
+        '2. Mountains or Beaches?',
+        '3. Movies or TV Series?',
+        '4. Bollywood or Hollywood?',
+        '5. Cards or Badminton?',
+        '6. Theatre or Home OTT?',
+        '7. Morning Person or Night Owl?',
+        '8. Coffee or Tea?',
+        '9. Big Social Gatherings or Low-Key Hangouts?',
+        '10. Adventure Trips or Relaxed Vacations?',
+        '11. Shopping Outdoors or Online Shopping?',
+        '12. Go with the flow / Plan ahead',
+        '13. Planned / Spontaneous',
+        '14. Growth-driven / Work–Life balanced',
+        '15. Simple comfortable life / High-ambition lifestyle',
+        '16.Good Looks / Good Nature ?'
+      ];
+
+      selectedArray.forEach(id => {
+        const r = allResponses.find(x => String(x.id) === String(id));
+        if (!r) return;
+
+        const col = document.createElement('div');
+        col.className = 'bg-slate-950/60 border border-slate-800 rounded-xl p-3 space-y-2';
+
+        const header = document.createElement('div');
+        header.className = 'mb-2';
+        header.innerHTML = `
+          <div class="text-[10px] text-slate-500">ID #${r.id}</div>
+          <div class="text-xs sm:text-sm font-semibold">${r.name || 'Unnamed'}</div>
+          <div class="text-[10px] text-slate-500 break-all">${r.email || ''}</div>
+        `;
+        col.appendChild(header);
+
+        questions.forEach((qText, index) => {
+          const ansKey = 'q' + (index + 1);
+          const block = document.createElement('div');
+          block.className = 'border-t border-slate-800 pt-1 mt-1';
+          block.innerHTML = `
+            <div class="text-[10px] text-slate-500">${qText}</div>
+            <div class="text-xs font-medium text-slate-100">${r[ansKey] || '-'}</div>
+          `;
+          col.appendChild(block);
+        });
+
+        container.appendChild(col);
+      });
+    }
+
+    function handleCompareToggle(id, checked) {
+      if (checked) {
+        selectedIds.add(id);
+        // limit to 3 – remove oldest
+        if (selectedIds.size > 3) {
+          const first = selectedIds.values().next().value;
+          selectedIds.delete(first);
+          const cb = document.querySelector(`input[data-id="${first}"]`);
+          if (cb) cb.checked = false;
+        }
+      } else {
+        selectedIds.delete(id);
+      }
+      renderCompare();
+    }
+
+    async function loadResponses() {
+      try {
+        const res = await fetch('/api/responses');
+        const data = await res.json();
+        allResponses = data;
+
+        const body = document.getElementById('responsesBody');
+        const noData = document.getElementById('noData');
+
+        if (!data || data.length === 0) {
+          noData.classList.remove('hidden');
+          return;
+        }
+
+        data.forEach(r => {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-800/60';
+
+          const cells = [
+            r.id,
+            r.created_at,
+            r.name || '',
+            r.email || '',
+            r.q1, r.q2, r.q3, r.q4, r.q5,
+            r.q6, r.q7, r.q8, r.q9, r.q10,
+            r.q11, r.q12, r.q13, r.q14, r.q15
+          ];
+
+          cells.forEach(text => {
+            const td = document.createElement('td');
+            td.className = 'px-2 sm:px-3 py-1.5 sm:py-2 align-top whitespace-nowrap';
+            td.textContent = text || '';
+            tr.appendChild(td);
+          });
+
+          // Compare checkbox
+          const compareTd = document.createElement('td');
+          compareTd.className = 'px-2 sm:px-3 py-1.5 sm:py-2 align-top';
+          const cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.className = 'w-4 h-4 accent-sky-500';
+          cb.dataset.id = r.id;
+          cb.addEventListener('change', (e) => {
+            handleCompareToggle(String(r.id), e.target.checked);
+          });
+          compareTd.appendChild(cb);
+          tr.appendChild(compareTd);
+
+          body.appendChild(tr);
+        });
+      } catch (err) {
+        console.error('Error loading responses', err);
+      }
+    }
+
+    loadResponses();
+  </script>
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PVS Personality Preference Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-slate-100">
+  <div class="max-w-3xl mx-auto px-4 py-6 sm:py-10">
+    <header class="mb-6 sm:mb-8 text-center">
+      <h1 class="text-2xl sm:text-3xl font-bold mb-1">
+        Personality Preference Test by Poojan Shah
+      </h1>
+      <p class="text-slate-300 text-sm sm:text-base">
+        16 quick choices to understand your personality and lifestyle.
+      </p>
+    </header>
+
+    <main>
+      <form id="quizForm" action="/submit" method="POST"
+        class="bg-slate-900/80 backdrop-blur rounded-2xl shadow-xl border border-slate-700 p-4 sm:p-6 space-y-6">
+
+        <!-- Basic info -->
+        <div class="grid gap-3 sm:grid-cols-2">
+          <div>
+            <label class="block text-xs sm:text-sm font-medium mb-1" for="name">Name (optional)</label>
+            <input id="name" name="name" type="text"
+              class="w-full rounded-xl bg-slate-800 border border-slate-600 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500" />
+          </div>
+          <div>
+            <label class="block text-xs sm:text-sm font-medium mb-1" for="email">Email (optional)</label>
+            <input id="email" name="email" type="email"
+              class="w-full rounded-xl bg-slate-800 border border-slate-600 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500" />
+          </div>
+        </div>
+
+        <hr class="border-slate-700" />
+
+        <!-- Questions -->
+        <div class="space-y-4 sm:space-y-5">
+
+          <!-- Question pattern: question-card + options -->
+
+          <!-- 1 -->
+          <div class="question-card" data-question="q1">
+            <p class="question-text">1. Introvert or Extrovert?</p>
+            <div class="options">
+              <label class="option">
+                <input type="radio" name="q1" value="Introvert" required />
+                <span>Introvert</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="q1" value="Extrovert" required />
+                <span>Extrovert</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 2 -->
+          <div class="question-card" data-question="q2">
+            <p class="question-text">2. Mountains or Beaches?</p>
+            <div class="options">
+              <label class="option">
+                <input type="radio" name="q2" value="Mountains" required />
+                <span>Mountains</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="q2" value="Beaches" required />
+                <span>Beaches</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 3 -->
+          <div class="question-card" data-question="q3">
+            <p class="question-text">3. Movies or TV Series?</p>
+            <div class="options">
+              <label class="option">
+                <input type="radio" name="q3" value="Movies" required />
+                <span>Movies</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="q3" value="TV Series" required />
+                <span>TV Series</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 4 -->
+          <div class="question-card" data-question="q4">
+            <p class="question-text">4. Bollywood or Hollywood?</p>
+            <div class="options">
+              <label class="option">
+                <input type="radio" name="q4" value="Bollywood" required />
+                <span>Bollywood</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="q4" value="Hollywood" required />
+                <span>Hollywood</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 5 -->
+          <div class="question-card" data-question="q5">
+            <p class="question-text">5. Cards or Badminton?</p>
+            <div class="options">
+              <label class="option">
+                <input type="radio" name="q5" value="Cards" required />
+                <span>Cards</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="q5" value="Badminton" required />
+                <span>Badminton</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 6 -->
+          <div class="question-card" data-question="q6">
+            <p class="question-text">6. Theatre or Home OTT?</p>
+            <div class="options">
+              <label class="option">
+                <input type="radio" name="q6" value="Theatre" required />
+                <span>Theatre</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="q6" value="Home OTT" required />
+                <span>Home OTT</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 7 -->
+          <div class="question-card" data-question="q7">
+            <p class="question-text">7. Morning Person or Night Owl?</p>
+            <div class="options">
+              <label class="option">
+                <input type="radio" name="q7" value="Morning Person" required />
+                <span>Morning Person</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="q7" value="Night Owl" required />
+                <span>Night Owl</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 8 -->
+          <div class="question-card" data-question="q8">
+            <p class="question-text">8. Coffee or Tea?</p>
+            <div class="options">
+              <label class="option">
+                <input type="radio" name="q8" value="Coffee" required />
+                <span>Coffee</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="q8" value="Tea" required />
+                <span>Tea</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 9 -->
+          <div class="question-card" data-question="q9">
+            <p class="question-text">9. Big Social Gatherings or Low-Key Hangouts?</p>
+            <div class="options">
+              <label class="option">
+                <input type="radio" name="q9" value="Big Social Gatherings" required />
+                <span>Big Social Gatherings</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="q9" value="Low-Key Hangouts" required />
+                <span>Low-Key Hangouts</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 10 -->
+          <div class="question-card" data-question="q10">
+            <p class="question-text">10. Adventure Trips or Relaxed Vacations?</p>
+            <div class="options">
+              <label class="option">
+                <input type="radio" name="q10" value="Adventure Trips" required />
+                <span>Adventure Trips</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="q10" value="Relaxed Vacations" required />
+                <span>Relaxed Vacations</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 11 -->
+          <div class="question-card" data-question="q11">
+            <p class="question-text">11. Shopping Outdoors or Online Shopping?</p>
+            <div class="options">
+              <label class="option">
+                <input type="radio" name="q11" value="Shopping Outdoors" required />
+                <span>Shopping Outdoors</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="q11" value="Online Shopping" required />
+                <span>Online Shopping</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 12 -->
+          <div class="question-card" data-question="q12">
+            <p class="question-text">12. Go with the flow / Plan ahead</p>
+            <div class="options">
+              <label class="option">
+                <input type="radio" name="q12" value="Go with the flow" required />
+                <span>Go with the flow</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="q12" value="Plan ahead" required />
+                <span>Plan ahead</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 13 -->
+          <div class="question-card" data-question="q13">
+            <p class="question-text">13. Planned / Spontaneous</p>
+            <div class="options">
+              <label class="option">
+                <input type="radio" name="q13" value="Planned" required />
+                <span>Planned</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="q13" value="Spontaneous" required />
+                <span>Spontaneous</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 14 -->
+          <div class="question-card" data-question="q14">
+            <p class="question-text">14. Growth-driven / Work–Life balanced</p>
+            <div class="options">
+              <label class="option">
+                <input type="radio" name="q14" value="Growth-driven" required />
+                <span>Growth-driven</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="q14" value="Work–Life balanced" required />
+                <span>Work–Life balanced</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 15 -->
+          <div class="question-card" data-question="q15">
+            <p class="question-text">15. Simple comfortable life / High-ambition lifestyle</p>
+            <div class="options">
+              <label class="option">
+                <input type="radio" name="q15" value="Simple comfortable life" required />
+                <span>Simple comfortable life</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="q15" value="High-ambition lifestyle" required />
+                <span>High-ambition lifestyle</span>
+              </label>
+            </div>
+          </div>
+
+                    <!-- 16 -->
+          <div class="question-card" data-question="q15">
+            <p class="question-text">16. Good Looks / Good Nature ?</p>
+            <div class="options">
+              <label class="option">
+                <input type="radio" name="q16" value="Simple comfortable life" required />
+                <span>Good Looks</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="q16" value="High-ambition lifestyle" required />
+                <span>Good Nature</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 sm:pt-4">
+          <p id="validationMessage" class="text-xs sm:text-sm text-red-400 hidden text-center sm:text-left">
+            Please answer all questions before submitting.
+          </p>
+          <button type="submit"
+            class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-2.5 rounded-xl text-sm font-semibold bg-sky-500 hover:bg-sky-400 text-white shadow-lg shadow-sky-500/25 transition">
+            Submit &amp; Download Result
+          </button>
+        </div>
+      </form>
+    </main>
+
+    <footer class="mt-6 sm:mt-8 text-center text-[11px] sm:text-xs text-slate-500">
+      PVS Personality Test • Node.js • SQLite • Tailwind
+      <br />
+      <a href="results.html" class="text-sky-400 hover:underline">Admin: view &amp; compare responses</a>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
