@@ -50,6 +50,8 @@
             <th class="px-2 sm:px-3 py-2 text-left border-b border-slate-700">Q15</th>
             <th class="px-2 sm:px-3 py-2 text-left border-b border-slate-700">Q16</th>
             <th class="px-2 sm:px-3 py-2 text-left border-b border-slate-700">Compare</th>
+            <th class="px-2 sm:px-3 py-2 text-left border-b border-slate-700">Delete</th>
+
           </tr>
         </thead>
         <tbody id="responsesBody" class="divide-y divide-slate-800">
@@ -78,145 +80,194 @@
   </div>
 
   <script>
-    let allResponses = [];
-    const selectedIds = new Set();
+  let allResponses = [];
+  const selectedIds = new Set();
 
-    function renderCompare() {
-      const section = document.getElementById('compareSection');
-      const container = document.getElementById('compareContainer');
+  async function deleteResponse(id, rowElement) {
+    const confirmed = window.confirm(`Delete response #${id}? This cannot be undone.`);
+    if (!confirmed) return;
 
-      if (selectedIds.size === 0) {
-        section.classList.add('hidden');
-        container.innerHTML = '';
+    try {
+      const res = await fetch(`/api/responses/${id}`, {
+        method: 'DELETE'
+      });
+
+      if (!res.ok) {
+        alert('Failed to delete. Please try again.');
         return;
       }
 
-      section.classList.remove('hidden');
+      // Remove from table UI
+      rowElement.remove();
+
+      // Remove from local data
+      allResponses = allResponses.filter(r => String(r.id) !== String(id));
+
+      // If it was selected for compare, unselect
+      if (selectedIds.has(String(id))) {
+        selectedIds.delete(String(id));
+        renderCompare();
+      }
+    } catch (err) {
+      console.error('Error deleting response', err);
+      alert('Error deleting response. Check console/logs.');
+    }
+  }
+
+  function renderCompare() {
+    const section = document.getElementById('compareSection');
+    const container = document.getElementById('compareContainer');
+
+    if (selectedIds.size === 0) {
+      section.classList.add('hidden');
       container.innerHTML = '';
+      return;
+    }
 
-      const selectedArray = Array.from(selectedIds).slice(0, 3);
-      const questions = [
-        '1. Introvert or Extrovert?',
-        '2. Mountains or Beaches?',
-        '3. Movies or TV Series?',
-        '4. Bollywood or Hollywood?',
-        '5. Cards or Badminton?',
-        '6. Theatre or Home OTT?',
-        '7. Morning Person or Night Owl?',
-        '8. Coffee or Tea?',
-        '9. Big Social Gatherings or Low-Key Hangouts?',
-        '10. Adventure Trips or Relaxed Vacations?',
-        '11. Shopping Outdoors or Online Shopping?',
-        '12. Theme parks / Museums',
-        '13. Planned / Spontaneous',
-        '14. Growth-driven / Work–Life balanced',
-        '15. Simple comfortable life / High-ambition lifestyle',
-        '16.Good Looks / Good Nature ?'
-      ];
+    section.classList.remove('hidden');
+    container.innerHTML = '';
 
-      selectedArray.forEach(id => {
-        const r = allResponses.find(x => String(x.id) === String(id));
-        if (!r) return;
+    const selectedArray = Array.from(selectedIds).slice(0, 3);
+    const questions = [
+      '1. Introvert or Extrovert?',
+      '2. Mountains or Beaches?',
+      '3. Movies or TV Series?',
+      '4. Bollywood or Hollywood?',
+      '5. Cards or Badminton?',
+      '6. Theatre or Home OTT?',
+      '7. Morning Person or Night Owl?',
+      '8. Coffee or Tea?',
+      '9. Big Social Gatherings or Low-Key Hangouts?',
+      '10. Adventure Trips or Relaxed Vacations?',
+      '11. Shopping Outdoors or Online Shopping?',
+      '12. Go with the flow / Plan ahead',
+      '13. Planned / Spontaneous',
+      '14. Growth-driven / Work–Life balanced',
+      '15. Simple comfortable life / High-ambition lifestyle',
+      '16. <your Q16 text here>'
+    ];
 
-        const col = document.createElement('div');
-        col.className = 'bg-slate-950/60 border border-slate-800 rounded-xl p-3 space-y-2';
+    selectedArray.forEach(id => {
+      const r = allResponses.find(x => String(x.id) === String(id));
+      if (!r) return;
 
-        const header = document.createElement('div');
-        header.className = 'mb-2';
-        header.innerHTML = `
-          <div class="text-[10px] text-slate-500">ID #${r.id}</div>
-          <div class="text-xs sm:text-sm font-semibold">${r.name || 'Unnamed'}</div>
-          <div class="text-[10px] text-slate-500 break-all">${r.email || ''}</div>
+      const col = document.createElement('div');
+      col.className = 'bg-slate-950/60 border border-slate-800 rounded-xl p-3 space-y-2';
+
+      const header = document.createElement('div');
+      header.className = 'mb-2';
+      header.innerHTML = `
+        <div class="text-[10px] text-slate-500">ID #${r.id}</div>
+        <div class="text-xs sm:text-sm font-semibold">${r.name || 'Unnamed'}</div>
+        <div class="text-[10px] text-slate-500 break-all">${r.email || ''}</div>
+      `;
+      col.appendChild(header);
+
+      questions.forEach((qText, index) => {
+        const ansKey = 'q' + (index + 1);
+        const block = document.createElement('div');
+        block.className = 'border-t border-slate-800 pt-1 mt-1';
+        block.innerHTML = `
+          <div class="text-[10px] text-slate-500">${qText}</div>
+          <div class="text-xs font-medium text-slate-100">${r[ansKey] || '-'}</div>
         `;
-        col.appendChild(header);
-
-        questions.forEach((qText, index) => {
-          const ansKey = 'q' + (index + 1);
-          const block = document.createElement('div');
-          block.className = 'border-t border-slate-800 pt-1 mt-1';
-          block.innerHTML = `
-            <div class="text-[10px] text-slate-500">${qText}</div>
-            <div class="text-xs font-medium text-slate-100">${r[ansKey] || '-'}</div>
-          `;
-          col.appendChild(block);
-        });
-
-        container.appendChild(col);
+        col.appendChild(block);
       });
-    }
 
-    function handleCompareToggle(id, checked) {
-      if (checked) {
-        selectedIds.add(id);
-        // limit to 3 – remove oldest
-        if (selectedIds.size > 3) {
-          const first = selectedIds.values().next().value;
-          selectedIds.delete(first);
-          const cb = document.querySelector(`input[data-id="${first}"]`);
-          if (cb) cb.checked = false;
-        }
-      } else {
-        selectedIds.delete(id);
+      container.appendChild(col);
+    });
+  }
+
+  function handleCompareToggle(id, checked) {
+    if (checked) {
+      selectedIds.add(id);
+      // limit to 3 – remove oldest
+      if (selectedIds.size > 3) {
+        const first = selectedIds.values().next().value;
+        selectedIds.delete(first);
+        const cb = document.querySelector(`input[data-id="${first}"]`);
+        if (cb) cb.checked = false;
       }
-      renderCompare();
+    } else {
+      selectedIds.delete(id);
     }
+    renderCompare();
+  }
 
-    async function loadResponses() {
-      try {
-        const res = await fetch('/api/responses');
-        const data = await res.json();
-        allResponses = data;
+  async function loadResponses() {
+    try {
+      const res = await fetch('/api/responses');
+      const data = await res.json();
+      allResponses = data;
 
-        const body = document.getElementById('responsesBody');
-        const noData = document.getElementById('noData');
+      const body = document.getElementById('responsesBody');
+      const noData = document.getElementById('noData');
 
-        if (!data || data.length === 0) {
-          noData.classList.remove('hidden');
-          return;
-        }
+      if (!data || data.length === 0) {
+        noData.classList.remove('hidden');
+        return;
+      }
 
-        data.forEach(r => {
-          const tr = document.createElement('tr');
-          tr.className = 'hover:bg-slate-800/60';
+      data.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-800/60';
 
-          const cells = [
-            r.id,
-            r.created_at,
-            r.name || '',
-            r.email || '',
-            r.q1, r.q2, r.q3, r.q4, r.q5,
-            r.q6, r.q7, r.q8, r.q9, r.q10,
-            r.q11, r.q12, r.q13, r.q14, r.q15
-          ];
+        const cells = [
+          r.id,
+          r.created_at,
+          r.name || '',
+          r.email || '',
+          r.q1, r.q2, r.q3, r.q4, r.q5,
+          r.q6, r.q7, r.q8, r.q9, r.q10,
+          r.q11, r.q12, r.q13, r.q14, r.q15,
+          r.q16
+        ];
 
-          cells.forEach(text => {
-            const td = document.createElement('td');
-            td.className = 'px-2 sm:px-3 py-1.5 sm:py-2 align-top whitespace-nowrap';
-            td.textContent = text || '';
-            tr.appendChild(td);
-          });
-
-          // Compare checkbox
-          const compareTd = document.createElement('td');
-          compareTd.className = 'px-2 sm:px-3 py-1.5 sm:py-2 align-top';
-          const cb = document.createElement('input');
-          cb.type = 'checkbox';
-          cb.className = 'w-4 h-4 accent-sky-500';
-          cb.dataset.id = r.id;
-          cb.addEventListener('change', (e) => {
-            handleCompareToggle(String(r.id), e.target.checked);
-          });
-          compareTd.appendChild(cb);
-          tr.appendChild(compareTd);
-
-          body.appendChild(tr);
+        cells.forEach(text => {
+          const td = document.createElement('td');
+          td.className = 'px-2 sm:px-3 py-1.5 sm:py-2 align-top whitespace-nowrap';
+          td.textContent = text || '';
+          tr.appendChild(td);
         });
-      } catch (err) {
-        console.error('Error loading responses', err);
-      }
-    }
 
-    loadResponses();
+        // Compare checkbox column
+        const compareTd = document.createElement('td');
+        compareTd.className = 'px-2 sm:px-3 py-1.5 sm:py-2 align-top';
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.className = 'w-4 h-4 accent-sky-500';
+        cb.dataset.id = r.id;
+        cb.addEventListener('change', (e) => {
+          handleCompareToggle(String(r.id), e.target.checked);
+        });
+        compareTd.appendChild(cb);
+        tr.appendChild(compareTd);
+
+        // Delete button column
+        const deleteTd = document.createElement('td');
+        deleteTd.className = 'px-2 sm:px-3 py-1.5 sm:py-2 align-top';
+
+        const delBtn = document.createElement('button');
+        delBtn.textContent = 'Delete';
+        delBtn.className =
+          'px-2 py-1 rounded-lg text-[11px] sm:text-xs bg-red-500 hover:bg-red-400 text-white shadow-sm shadow-red-500/30 transition';
+
+        delBtn.addEventListener('click', () => {
+          deleteResponse(r.id, tr);
+        });
+
+        deleteTd.appendChild(delBtn);
+        tr.appendChild(deleteTd);
+
+        body.appendChild(tr);
+      });
+    } catch (err) {
+      console.error('Error loading responses', err);
+    }
+  }
+
+  loadResponses();
+
   </script>
 </body>
 </html>
