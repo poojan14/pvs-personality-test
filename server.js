@@ -216,6 +216,24 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// Delete a single response by ID
+app.delete('/api/responses/:id', (req, res) => {
+  const { id } = req.params;
+
+  db.run('DELETE FROM responses WHERE id = ?', [id], function (err) {
+    if (err) {
+      console.error('Error deleting response:', err);
+      return res.status(500).json({ error: 'Failed to delete response' });
+    }
+
+    if (this.changes === 0) {
+      return res.status(404).json({ error: 'Response not found' });
+    }
+
+    res.json({ success: true });
+  });
+});
+
 // --- Start server ---
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
