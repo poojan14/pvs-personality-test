@@ -34,6 +34,18 @@ db.serialize(() => {
       q16 TEXT
     );
   `);
+
+
+  db.run(`ALTER TABLE responses ADD COLUMN q16 TEXT;`, (err) => {
+    if (err) {
+      // This will fail with "duplicate column name" once q16 already exists – that's OK.
+      if (!String(err.message).includes('duplicate column name')) {
+        console.log('Error adding q16 column (can ignore if duplicate):', err.message);
+      }
+    } else {
+      console.log('q16 column added to responses table.');
+    }
+  });
 });
 
 // --- Middlewares ---
